@@ -120,14 +120,20 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+import "os"
+
 func main() {
 	http.HandleFunc("/", homeHandler)
 
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	port := ":8080"
-	fmt.Printf("Portfolio running at http://localhost%s\n", port)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" 
+	}
 
-	log.Fatal(http.ListenAndServe(port, nil))
+	fmt.Printf("Portfolio running on port %s\n", port)
+
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
