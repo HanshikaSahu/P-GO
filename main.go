@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
   "os"
+  "path/filepath"
 )
 
 type Project struct {
@@ -113,7 +114,7 @@ var portfolioData = Portfolio{
 
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl := template.Must(template.ParseFiles("./templates/index.html"))
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if err := tmpl.Execute(w, portfolioData); err != nil {
@@ -121,19 +122,19 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 func main() {
 	http.HandleFunc("/", homeHandler)
 
-	fs := http.FileServer(http.Dir("static"))
+	// ✅ Fix static path
+	staticPath, _ := filepath.Abs("./static")
+	fs := http.FileServer(http.Dir(staticPath))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" 
+		port = "8080"
 	}
 
-	fmt.Printf("Portfolio running on port %s\n", port)
-
+	fmt.Printf("Running on port %s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
