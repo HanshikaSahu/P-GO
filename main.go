@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+  "os"
 )
 
 type Project struct {
@@ -120,7 +121,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-import "os"
 
 func main() {
 	http.HandleFunc("/", homeHandler)
